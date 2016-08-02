@@ -4,27 +4,27 @@
     api-level="23"
     density="560dpi"
     format="7"
-    timestamp="594319378294129"
+    timestamp="595695157430050"
     token="3228957913636009598" >
 
     <task
         name="javac"
-        duration="398" />
+        duration="355" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="110" />
+        duration="27" />
     <task
         name="verifier"
-        duration="19" />
+        duration="6" />
 
     <artifact
         location="/Users/Sharath/Development/github_repos/TwitterCPTimeline/app/build/outputs/apk/app-debug.apk"
         type="MAIN" />
 
-    <build timestamp="594319378294129" >
+    <build timestamp="595695157430050" >
         <artifact
             location="/Users/Sharath/Development/github_repos/TwitterCPTimeline/app/build/outputs/apk/app-debug.apk"
             type="MAIN" />

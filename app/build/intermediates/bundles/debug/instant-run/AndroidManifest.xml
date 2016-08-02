@@ -41,10 +41,14 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="cprest"
+                    android:host="cpsimpletweets"
                     android:scheme="oauth" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.codepath.apps.twittertimeline.activities.TimelineActivity"
+            android:label="@string/title_activity_timeline"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
