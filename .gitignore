@@ -1,0 +1,10 @@
+# Source: https://gist.github.com/nesquena/5617544/raw/53710b374e7df3302df43b552488d876040ada3d/.gitignore
+
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
