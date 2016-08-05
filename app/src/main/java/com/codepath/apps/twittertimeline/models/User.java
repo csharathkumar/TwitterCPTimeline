@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class User {
     String name;
     long uid;
-    String screenNaem;
+    String screenName;
     String profileImageUrl;
 
     public String getName() {
@@ -28,12 +28,12 @@ public class User {
         this.uid = uid;
     }
 
-    public String getScreenNaem() {
-        return screenNaem;
+    public String getScreenName() {
+        return screenName;
     }
 
-    public void setScreenNaem(String screenNaem) {
-        this.screenNaem = screenNaem;
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
     }
 
     public String getProfileImageUrl() {
@@ -49,7 +49,7 @@ public class User {
         try{
             user.name = jsonObject.getString("name");
             user.uid = jsonObject.getLong("id");
-            user.screenNaem = jsonObject.getString("screen_name");
+            user.screenName = jsonObject.getString("screen_name");
             user.profileImageUrl = jsonObject.getString("profile_image_url");
         }catch(JSONException e){
             e.printStackTrace();
