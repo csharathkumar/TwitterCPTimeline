@@ -17,11 +17,13 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
-    <TextView
+    <com.codepath.apps.twittertimeline.utils.LinkifiedTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Tweet"
         android:id="@+id/tvBody"
+        android:autoLink="all"
+        android:linksClickable="true"
         android:layout_below="@+id/tvUserName"
         android:layout_toRightOf="@+id/ivProfile"
         android:layout_toEndOf="@+id/ivProfile" />
@@ -57,4 +59,22 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         />
+    <LinearLayout android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView android:layout_weight="1"
+            android:src="@drawable/ic_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView android:layout_weight="1"
+            android:src="@drawable/ic_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView android:layout_weight="1"
+            android:src="@drawable/ic_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </RelativeLayout>

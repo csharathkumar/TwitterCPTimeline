@@ -24,7 +24,16 @@ import butterknife.ButterKnife;
 public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAdapter.TweetViewHolder> {
     private Context mContext;
     private List<Tweet> mTweets;
-
+    // Define listener member variable
+    private static OnItemClickListener listener;
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
     public TweetsRecyclerAdapter(Context context, List<Tweet>tweets){
         mContext = context;
         mTweets = tweets;
@@ -62,6 +71,11 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         }
         return 0;
     }
+
+    public void addItemAtPosition(Tweet tweet, int position){
+        mTweets.add(position,tweet);
+        notifyItemInserted(position);
+    }
     @Override
     public int getItemCount() {
         return mTweets.size();
@@ -82,6 +96,12 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         public TweetViewHolder(final View itemView){
             super(itemView);
             ButterKnife.bind(this,itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(itemView,getLayoutPosition());
+                }
+            });
         }
     }
 }

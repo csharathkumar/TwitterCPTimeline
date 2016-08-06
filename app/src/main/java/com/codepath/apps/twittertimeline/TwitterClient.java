@@ -6,9 +6,13 @@ import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
 
+import com.codepath.apps.twittertimeline.models.Tweet;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /*
  * 
@@ -54,5 +58,18 @@ public class TwitterClient extends OAuthBaseClient {
 		}
 
 		getClient().get(apiUrl,params,handler);
+	}
+
+	//Post a tweet
+	//https://api.twitter.com/1.1/statuses/update.json
+	public void postNewTweet(String status, AsyncHttpResponseHandler handler){
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		try {
+			params.put("status", status);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		getClient().post(apiUrl,params,handler);
 	}
 }
