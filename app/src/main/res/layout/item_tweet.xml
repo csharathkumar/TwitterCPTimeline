@@ -68,6 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <VideoView android:id="@+id/videoView"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

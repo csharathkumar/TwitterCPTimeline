@@ -2,6 +2,7 @@ package com.codepath.apps.twittertimeline.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Sharath on 8/3/16.
@@ -71,6 +71,18 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         }else{
             holder.ivFavorite.setImageResource(R.drawable.ic_favorite_twitter);
         }
+        if(tweet.getMedia() != null){
+            Log.d("DEBUG", "Image url is - "+tweet.getMedia().getMediaUrl());
+        }
+        if(tweet.getMedia() != null){
+            holder.mediaLayout.setVisibility(View.VISIBLE);
+            holder.ivImage.setImageResource(0);
+            Picasso.with(mContext)
+                    .load(tweet.getMedia().getMediaUrlHttps()+":small")
+                    .into(holder.ivImage);
+        }else{
+            holder.mediaLayout.setVisibility(View.GONE);
+        }
     }
     public long getMaxTweetId(){
         if(mTweets != null && !mTweets.isEmpty()){
@@ -83,6 +95,11 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
     public void addItemAtPosition(Tweet tweet, int position){
         mTweets.add(position,tweet);
         notifyItemInserted(position);
+    }
+
+    public void replaceItemAtPosition(Tweet tweet, int position){
+        mTweets.set(position,tweet);
+        notifyItemChanged(position);
     }
     @Override
     public int getItemCount() {

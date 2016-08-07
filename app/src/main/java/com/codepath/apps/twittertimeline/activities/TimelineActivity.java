@@ -28,6 +28,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class TimelineActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Reply icon clicked",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.actionFavorite:
+                        favoriteTweet(position, tweet);
                         Toast.makeText(getApplicationContext(), "Favorite action clicked",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.actionRetweet:
@@ -112,6 +114,28 @@ public class TimelineActivity extends AppCompatActivity {
         });
         client = TwitterApplication.getRestClient();
         populateTimeline(true,1);
+    }
+
+    private void favoriteTweet(final int position, Tweet tweet) {
+        boolean create = !tweet.isFavorited();
+        client.favoriteTweet(create,tweet.getUid(),new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    //JSONObject jsonObject = response.getJSONObject(0);
+                    Tweet tweetReturned = Tweet.fromJSON(response);
+                    tweetsRecyclerAdapter.replaceItemAtPosition(tweetReturned,position);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
+                Toast.makeText(TimelineActivity.this,"Favorite unsuccessful",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

@@ -20,6 +20,7 @@ public class Tweet implements Parcelable {
     private User user;
     private String createdAt;
     private boolean favorited;
+    private Media media;
 
     public String getBody() {
         return body;
@@ -61,6 +62,14 @@ public class Tweet implements Parcelable {
         this.favorited = favorited;
     }
 
+    public Media getMedia() {
+        return media;
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
         try {
@@ -69,6 +78,14 @@ public class Tweet implements Parcelable {
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.favorited = jsonObject.getBoolean("favorited");
             tweet.user = User.fromJSONObject(jsonObject.getJSONObject("user"));
+            JSONObject entities = jsonObject.getJSONObject("entities");
+            if(entities.has("media")){
+                JSONArray mediaArray = entities.getJSONArray("media");
+                if(mediaArray != null && mediaArray.length() > 0){
+                    tweet.media = Media.fromJSONObject(mediaArray.getJSONObject(0));
+                }
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,6 +121,7 @@ public class Tweet implements Parcelable {
         dest.writeParcelable(this.user, flags);
         dest.writeString(this.createdAt);
         dest.writeString(String.valueOf(this.favorited));
+        dest.writeParcelable(this.media,flags);
     }
 
     public Tweet() {
@@ -115,6 +133,7 @@ public class Tweet implements Parcelable {
         this.user = in.readParcelable(User.class.getClassLoader());
         this.createdAt = in.readString();
         this.favorited = Boolean.parseBoolean(in.readString());
+        this.media = in.readParcelable(Media.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
