@@ -1,5 +1,7 @@
 package com.codepath.apps.twittertimeline.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -65,7 +67,24 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View itemView, int position) {
                 Tweet tweet = tweets.get(position);
-                Toast.makeText(getApplicationContext(), tweet.getBody(),Toast.LENGTH_SHORT).show();
+                switch(itemView.getId()){
+                    case R.id.actionReply:
+                        Intent intent = new Intent(TimelineActivity.this,ComposeActivity.class);
+                        intent.putExtra(ComposeActivity.IS_REPLY,true);
+                        intent.putExtra(ComposeActivity.BASE_TWEET_OBJECT,tweet);
+                        startActivityForResult(intent,ComposeActivity.REPLY_TWEET_REQUEST_CODE);
+                        Toast.makeText(getApplicationContext(), "Reply icon clicked",Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.actionFavorite:
+                        Toast.makeText(getApplicationContext(), "Favorite action clicked",Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.actionRetweet:
+                        Toast.makeText(getApplicationContext(), "Retweet action clicked",Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), tweet.getBody(),Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         rvTweets.setOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -85,12 +104,28 @@ public class TimelineActivity extends AppCompatActivity {
         fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ComposeTweetDialogFragment composeTweetDialogFragment = ComposeTweetDialogFragment.newInstance();
-                composeTweetDialogFragment.show(getSupportFragmentManager(),"Compose");
+                /*ComposeTweetDialogFragment composeTweetDialogFragment = ComposeTweetDialogFragment.newInstance();
+                composeTweetDialogFragment.show(getSupportFragmentManager(),"Compose");*/
+                Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
+                startActivityForResult(intent,ComposeActivity.COMPOSE_TWEET_REQUEST_CODE);
             }
         });
         client = TwitterApplication.getRestClient();
         populateTimeline(true,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ComposeActivity.COMPOSE_TWEET_REQUEST_CODE){
+            if(resultCode == Activity.RESULT_OK){
+                if(data != null){
+                    Tweet tweet = data.getParcelableExtra(ComposeActivity.TWEET_OBJECT);
+                    tweetsRecyclerAdapter.addItemAtPosition(tweet,0);
+                }
+            }
+        }else if(requestCode == ComposeActivity.REPLY_TWEET_REQUEST_CODE){
+
+        }
     }
 
     private void populateTimeline(final boolean initial, long id) {

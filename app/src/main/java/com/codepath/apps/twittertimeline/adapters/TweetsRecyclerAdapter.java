@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.codepath.apps.twittertimeline.R;
 import com.codepath.apps.twittertimeline.models.Tweet;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Sharath on 8/3/16.
@@ -63,6 +66,11 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         Picasso.with(mContext)
                 .load(tweet.getUser().getProfileImageUrl())
                 .into(holder.ivProfileImage);
+        if(tweet.isFavorited()){
+            holder.ivFavorite.setImageResource(R.drawable.ic_favorited);
+        }else{
+            holder.ivFavorite.setImageResource(R.drawable.ic_favorite_twitter);
+        }
     }
     public long getMaxTweetId(){
         if(mTweets != null && !mTweets.isEmpty()){
@@ -92,6 +100,18 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         TextView tvScreenName;
         @BindView(R.id.tvTimestamp)
         TextView tvTimestamp;
+        @BindView(R.id.mediaLayout)
+        LinearLayout mediaLayout;
+        @BindView(R.id.ivImage)
+        ImageView ivImage;
+        @BindView(R.id.videoView)
+        VideoView videoView;
+        @BindView(R.id.actionFavorite)
+        ImageView ivFavorite;
+        @BindView(R.id.actionRetweet)
+        ImageView ivRetweet;
+        @BindView(R.id.actionReply)
+        ImageView ivReply;
 
         public TweetViewHolder(final View itemView){
             super(itemView);
@@ -100,6 +120,24 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
                 @Override
                 public void onClick(View v) {
                     listener.onItemClick(itemView,getLayoutPosition());
+                }
+            });
+            ivReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v,getLayoutPosition());
+                }
+            });
+            ivFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v,getLayoutPosition());
+                }
+            });
+            ivRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v,getLayoutPosition());
                 }
             });
         }

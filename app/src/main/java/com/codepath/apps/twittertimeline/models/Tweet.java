@@ -19,6 +19,7 @@ public class Tweet implements Parcelable {
     private long uid;
     private User user;
     private String createdAt;
+    private boolean favorited;
 
     public String getBody() {
         return body;
@@ -52,12 +53,21 @@ public class Tweet implements Parcelable {
         this.user = user;
     }
 
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
         try {
             tweet.body = jsonObject.getString("text");
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
+            tweet.favorited = jsonObject.getBoolean("favorited");
             tweet.user = User.fromJSONObject(jsonObject.getJSONObject("user"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -93,6 +103,7 @@ public class Tweet implements Parcelable {
         dest.writeLong(this.uid);
         dest.writeParcelable(this.user, flags);
         dest.writeString(this.createdAt);
+        dest.writeString(String.valueOf(this.favorited));
     }
 
     public Tweet() {
@@ -103,6 +114,7 @@ public class Tweet implements Parcelable {
         this.uid = in.readLong();
         this.user = in.readParcelable(User.class.getClassLoader());
         this.createdAt = in.readString();
+        this.favorited = Boolean.parseBoolean(in.readString());
     }
 
     public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
