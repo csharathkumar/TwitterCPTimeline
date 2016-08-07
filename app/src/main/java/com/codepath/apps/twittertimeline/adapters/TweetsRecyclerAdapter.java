@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.codepath.apps.twittertimeline.R;
+import com.codepath.apps.twittertimeline.models.Media;
 import com.codepath.apps.twittertimeline.models.Tweet;
 import com.codepath.apps.twittertimeline.utils.UtilityMethods;
 import com.squareup.picasso.Picasso;
@@ -71,15 +72,22 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         }else{
             holder.ivFavorite.setImageResource(R.drawable.ic_favorite_twitter);
         }
-        if(tweet.getMedia() != null){
-            Log.d("DEBUG", "Image url is - "+tweet.getMedia().getMediaUrl());
-        }
-        if(tweet.getMedia() != null){
+        Media media = tweet.getMedia();
+        if(media != null){
             holder.mediaLayout.setVisibility(View.VISIBLE);
-            holder.ivImage.setImageResource(0);
-            Picasso.with(mContext)
-                    .load(tweet.getMedia().getMediaUrlHttps()+":small")
-                    .into(holder.ivImage);
+            if(media.getType().equals("")){
+                holder.ivImage.setVisibility(View.VISIBLE);
+                holder.videoView.setVisibility(View.GONE);
+                holder.ivImage.setImageResource(0);
+                Picasso.with(mContext)
+                        .load(media.getMediaUrlHttps()+":small")
+                        .fit().centerCrop()
+                        .into(holder.ivImage);
+            }else{
+                holder.ivImage.setVisibility(View.GONE);
+                holder.videoView.setVisibility(View.VISIBLE);
+            }
+
         }else{
             holder.mediaLayout.setVisibility(View.GONE);
         }

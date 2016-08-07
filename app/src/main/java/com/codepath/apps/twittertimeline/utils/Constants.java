@@ -1,0 +1,9 @@
+package com.codepath.apps.twittertimeline.utils;
+
+/**
+ * Created by Sharath on 8/7/16.
+ */
+public interface Constants {
+    String IMAGE_KEY = "photo";
+    String VIDEO_KEY = "video";
+}

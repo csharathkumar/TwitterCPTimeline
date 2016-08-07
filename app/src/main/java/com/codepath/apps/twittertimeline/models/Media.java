@@ -2,7 +2,11 @@ package com.codepath.apps.twittertimeline.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.SyncStateContract;
 
+import com.codepath.apps.twittertimeline.utils.Constants;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +17,8 @@ public class Media implements Parcelable {
     String type;
     String mediaUrlHttps;
     String mediaUrl;
+    String videoUrl;
+    String videoUrlHttps;
 
     public String getType() {
         return type;
@@ -32,6 +38,11 @@ public class Media implements Parcelable {
             media.type = jsonObject.getString("type");
             media.mediaUrl = jsonObject.getString("media_url");
             media.mediaUrlHttps = jsonObject.getString("media_url_https");
+            if(media.type.equals(Constants.VIDEO_KEY)){
+                JSONObject videoInfo = jsonObject.getJSONObject("video_info");
+                JSONArray variants = videoInfo.getJSONArray("variants");
+                media.videoUrlHttps = variants.getJSONObject(0).getString("url");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,6 +58,8 @@ public class Media implements Parcelable {
         dest.writeString(this.type);
         dest.writeString(this.mediaUrlHttps);
         dest.writeString(this.mediaUrl);
+        dest.writeString(this.videoUrl);
+        dest.writeString(this.videoUrlHttps);
     }
 
     public Media() {
@@ -56,6 +69,8 @@ public class Media implements Parcelable {
         this.type = in.readString();
         this.mediaUrlHttps = in.readString();
         this.mediaUrl = in.readString();
+        this.videoUrl = in.readString();
+        this.videoUrlHttps = in.readString();
     }
 
     public static final Parcelable.Creator<Media> CREATOR = new Parcelable.Creator<Media>() {

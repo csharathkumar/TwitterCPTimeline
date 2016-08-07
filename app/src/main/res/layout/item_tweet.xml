@@ -63,10 +63,12 @@
         android:orientation="vertical"
         android:layout_below="@+id/tvBody"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivProfile"
+        android:layout_toEndOf="@+id/ivProfile">
         <ImageView android:id="@+id/ivImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="150dp" />
         <VideoView android:id="@+id/videoView"
             android:visibility="gone"
             android:layout_width="match_parent"
