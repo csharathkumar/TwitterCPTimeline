@@ -1,4 +1,4 @@
-# New York Times Article Search
+# Simple Twitter Client
 
 This Android application allows a user to see his twitter timeline and perform actions like Favorite, Retweet, Reply and Compose a tweet. 
 
@@ -12,9 +12,9 @@ Completed user stories:
  * [x] Required: User should be displayed the relative timestamp for each tweet "8m", "7h".
  * [x] Required: User can view more tweets as they scroll with infinite pagination.
  * [x] Required: User can compose a new tweet
-              *[x]   User can click a “Compose” icon in the Action Bar on the top right (1 point)
-              *[x]   User can then enter a new tweet and post this to twitter (2 points)
-              *[x]   User is taken back to home timeline with new tweet visible in timeline (1 point).
+ * [x] User can click a “Compose” icon in the Action Bar on the top right
+ * [x] User can then enter a new tweet and post this to twitter
+ * [x] User is taken back to home timeline with new tweet visible in timeline.
  
 Completed advanced user stories:
 
@@ -41,8 +41,6 @@ Completed advanced user stories:
 
 Here's a walkthrough of implemented user stories:
 
-![Alt text](nytimes_news_search.gif?raw=true "Online Mode")
-![Alt text](nytimes_news_search_offline.gif?raw=true "Offline Mode")
-
+![Alt text](twitter_timeline.gif?raw=true "Twitter Client")
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
