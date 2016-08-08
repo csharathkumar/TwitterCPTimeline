@@ -53,14 +53,14 @@
         <ImageView android:padding="10dp"
             android:id="@+id/addLocation"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_favorite_twitter"
+            android:src="@drawable/ic_add_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <ImageView android:padding="10dp"
             android:id="@+id/addImage"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/addLocation"
-            android:src="@drawable/ic_favorite_twitter"
+            android:src="@drawable/ic_add_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Button android:id="@+id/submit"

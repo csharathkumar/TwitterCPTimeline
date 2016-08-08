@@ -73,7 +73,19 @@ public class TwitterClient extends OAuthBaseClient {
 		}
 		getClient().post(apiUrl,params,handler);
 	}
-
+	//Post a Reply
+	//https://api.twitter.com/1.1/statuses/update.json
+	public void postNewReply(long originalTweetId, String status, AsyncHttpResponseHandler handler){
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		try {
+			params.put("status", status);
+			params.put("in_reply_to_status_id",originalTweetId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		getClient().post(apiUrl,params,handler);
+	}
 	//Favorite or unfavoritea tweet
 	//https://api.twitter.com/1.1/favorites/create.json?id=243138128959913986
 	//https://api.twitter.com/1.1/favorites/destroy.json?id=243138128959913986

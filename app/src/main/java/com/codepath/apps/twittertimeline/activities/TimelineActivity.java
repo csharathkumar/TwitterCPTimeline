@@ -3,6 +3,7 @@ package com.codepath.apps.twittertimeline.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ import com.codepath.apps.twittertimeline.fragments.ComposeTweetDialogFragment;
 import com.codepath.apps.twittertimeline.models.Tweet;
 import com.codepath.apps.twittertimeline.utils.DividerItemDecoration;
 import com.codepath.apps.twittertimeline.utils.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.twittertimeline.utils.UiUtils;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -41,6 +45,8 @@ import cz.msebera.android.httpclient.Header;
 public class TimelineActivity extends AppCompatActivity {
     private static final String TAG = TimelineActivity.class.getSimpleName();
     TwitterClient client;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.rvTweets)
     RecyclerView rvTweets;
     TweetsRecyclerAdapter tweetsRecyclerAdapter;
@@ -74,7 +80,6 @@ public class TimelineActivity extends AppCompatActivity {
                         intent.putExtra(ComposeActivity.IS_REPLY,true);
                         intent.putExtra(ComposeActivity.BASE_TWEET_OBJECT,tweet);
                         startActivityForResult(intent,ComposeActivity.REPLY_TWEET_REQUEST_CODE);
-                        Toast.makeText(getApplicationContext(), "Reply icon clicked",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.actionFavorite:
                         favoriteTweet(position, tweet);
@@ -86,10 +91,11 @@ public class TimelineActivity extends AppCompatActivity {
                     case R.id.ivImage:
                         Intent mediaIntent = new Intent(TimelineActivity.this, MediaActivity.class);
                         mediaIntent.putExtra(MediaActivity.TWEET_TO_DISPLAY,tweet);
+                        mediaIntent.putExtra(MediaActivity.TWEET_POSITION,position);
                         startActivityForResult(mediaIntent,MediaActivity.OPEN_MEDIA_ACTIVITY_REQUEST_CODE);
                         break;
                     default:
-                        Toast.makeText(getApplicationContext(), tweet.getBody(),Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), tweet.getBody(),Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -121,6 +127,21 @@ public class TimelineActivity extends AppCompatActivity {
         populateTimeline(true,1);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_timeline,menu);
+        MenuItem compose = menu.findItem(R.id.compose);
+        compose.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(TimelineActivity.this, ComposeActivity.class);
+                startActivityForResult(intent,ComposeActivity.COMPOSE_TWEET_REQUEST_CODE);
+                return true;
+            }
+        });
+        return true;
+    }
+
     private void favoriteTweet(final int position, Tweet tweet) {
         boolean create = !tweet.isFavorited();
         client.favoriteTweet(create,tweet.getUid(),new JsonHttpResponseHandler(){
@@ -130,6 +151,7 @@ public class TimelineActivity extends AppCompatActivity {
                     //JSONObject jsonObject = response.getJSONObject(0);
                     Tweet tweetReturned = Tweet.fromJSON(response);
                     tweetsRecyclerAdapter.replaceItemAtPosition(tweetReturned,position);
+                    UiUtils.showSnackBar(coordinatorLayout,"Favorited");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -138,7 +160,8 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                Toast.makeText(TimelineActivity.this,"Favorite unsuccessful",Toast.LENGTH_SHORT).show();
+                UiUtils.showSnackBar(coordinatorLayout,"Favorite unsuccessful");
+                //Toast.makeText(TimelineActivity.this,"Favorite unsuccessful",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -151,6 +174,7 @@ public class TimelineActivity extends AppCompatActivity {
                 try {
                     Tweet tweetReturned = Tweet.fromJSON(response);
                     tweetsRecyclerAdapter.replaceItemAtPosition(tweetReturned,position);
+                    UiUtils.showSnackBar(coordinatorLayout,"Retweeted");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -159,23 +183,29 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                Toast.makeText(TimelineActivity.this,"Retweet unsuccessful",Toast.LENGTH_SHORT).show();
+                UiUtils.showSnackBar(coordinatorLayout,"Retweet unsuccessful");
             }
         });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == ComposeActivity.COMPOSE_TWEET_REQUEST_CODE){
+        if(requestCode == ComposeActivity.COMPOSE_TWEET_REQUEST_CODE || requestCode == ComposeActivity.REPLY_TWEET_REQUEST_CODE){
             if(resultCode == Activity.RESULT_OK){
                 if(data != null){
                     Tweet tweet = data.getParcelableExtra(ComposeActivity.TWEET_OBJECT);
                     tweetsRecyclerAdapter.addItemAtPosition(tweet,0);
+                    rvTweets.scrollToPosition(0);
                 }
             }
-        }else if(requestCode == ComposeActivity.REPLY_TWEET_REQUEST_CODE){
-
         }else if(requestCode == MediaActivity.OPEN_MEDIA_ACTIVITY_REQUEST_CODE){
-
+            if(resultCode == Activity.RESULT_OK){
+                boolean tweetModified = data.getBooleanExtra(MediaActivity.IS_TWEET_MODIFIED,false);
+                if(tweetModified){
+                    int position = data.getIntExtra(MediaActivity.TWEET_POSITION,0);
+                    Tweet modifiedTweet = data.getParcelableExtra(MediaActivity.MODIFIED_TWEET);
+                    tweetsRecyclerAdapter.replaceItemAtPosition(modifiedTweet,position);
+                }
+            }
         }
     }
 

@@ -25,6 +25,7 @@ public class Tweet implements Parcelable {
     private long retweetCount;
     private long favoritesCount;
     private boolean retweeted;
+    private String inReplyToUserName;
 
 
     public String getBody() {
@@ -107,6 +108,14 @@ public class Tweet implements Parcelable {
         this.retweeted = retweeted;
     }
 
+    public String getInReplyToUserName() {
+        return inReplyToUserName;
+    }
+
+    public void setInReplyToUserName(String inReplyToUserName) {
+        this.inReplyToUserName = inReplyToUserName;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
         try {
@@ -136,8 +145,9 @@ public class Tweet implements Parcelable {
             if(jsonObject.has("retweeted") && !jsonObject.isNull("retweeted")){
                 tweet.retweeted = jsonObject.getBoolean("retweeted");
             }
-
-
+            if(jsonObject.has("in_reply_to_screen_name") && !jsonObject.isNull("in_reply_to_screen_name")){
+                tweet.inReplyToUserName = jsonObject.getString("in_reply_to_screen_name");
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -179,6 +189,7 @@ public class Tweet implements Parcelable {
         dest.writeLong(this.favoritesCount);
         dest.writeParcelable(this.extendedMedia,flags);
         dest.writeString(String.valueOf(this.retweeted));
+        dest.writeString(this.inReplyToUserName);
     }
 
     public Tweet() {
@@ -195,6 +206,7 @@ public class Tweet implements Parcelable {
         this.favoritesCount = in.readLong();
         this.extendedMedia = in.readParcelable(Media.class.getClassLoader());
         this.retweeted = Boolean.parseBoolean(in.readString());
+        this.inReplyToUserName = in.readString();
     }
 
     public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {

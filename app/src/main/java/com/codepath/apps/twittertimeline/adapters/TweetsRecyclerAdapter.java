@@ -94,6 +94,12 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
             holder.tvRetweetReplyInfo.setVisibility(View.GONE);
             holder.ivRetweet.setImageResource(R.drawable.ic_retweet_downloaded);
         }
+        if(tweet.getInReplyToUserName() != null){
+            holder.tvRetweetReplyInfo.setText("In reply to "+tweet.getInReplyToUserName());
+            holder.tvRetweetReplyInfo.setVisibility(View.VISIBLE);
+        }else{
+            holder.tvRetweetReplyInfo.setVisibility(View.GONE);
+        }
         Media media = tweet.getMedia();
         Media extendedMedia = tweet.getExtendedMedia();
         if(media != null){

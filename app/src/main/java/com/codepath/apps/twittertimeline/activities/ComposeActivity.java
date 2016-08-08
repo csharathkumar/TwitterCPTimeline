@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import com.codepath.apps.twittertimeline.TwitterApplication;
 import com.codepath.apps.twittertimeline.TwitterClient;
 import com.codepath.apps.twittertimeline.databinding.ActivityComposeBinding;
 import com.codepath.apps.twittertimeline.models.Tweet;
+import com.codepath.apps.twittertimeline.utils.UiUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -36,6 +39,7 @@ public class ComposeActivity extends AppCompatActivity {
     public static final String IS_REPLY = "is_reply";
 
     ActivityComposeBinding binding;
+    CoordinatorLayout coordinatorLayout;
     TextView tvReplyTo;
     EditText etTweet;
     TextView tvCharacters;
@@ -52,13 +56,16 @@ public class ComposeActivity extends AppCompatActivity {
         client = TwitterApplication.getRestClient();
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
                 | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
+        coordinatorLayout = binding.coordinatorLayout;
         tvReplyTo = binding.contentView.tvReplyTo;
         etTweet = binding.contentView.etTweet;
         tvCharacters = binding.contentView.tvCharacters;
         btSubmit = binding.contentView.submit;
+
         if(getIntent() != null && getIntent().getBooleanExtra(IS_REPLY,false)){
             isReply = true;
             mInitialTweet = getIntent().getParcelableExtra(BASE_TWEET_OBJECT);
@@ -96,15 +103,46 @@ public class ComposeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String tweet = etTweet.getText().toString();
                 if(!tweet.isEmpty() && tweet.length() <= 140){
-                    postNewTweet(tweet);
+                    if(isReply){
+                        postAReply(tweet);
+                    }else{
+                        postNewTweet(tweet);
+                    }
+                }else{
+                    UiUtils.showSnackBar(coordinatorLayout,"Please check the length of the tweet");
                 }
             }
         });
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void postNewTweet(String tweet){
         client.postNewTweet(tweet,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Tweet tweet = Tweet.fromJSON(response);
+                Intent data = new Intent();
+                data.putExtra(TWEET_OBJECT,tweet);
+                setResult(Activity.RESULT_OK,data);
+                finish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
+    private void postAReply(String tweet){
+        client.postNewReply(mInitialTweet.getUid(),tweet,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Tweet tweet = Tweet.fromJSON(response);
