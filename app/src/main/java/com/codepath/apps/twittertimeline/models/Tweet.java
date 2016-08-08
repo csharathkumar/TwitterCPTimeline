@@ -21,6 +21,11 @@ public class Tweet implements Parcelable {
     private String createdAt;
     private boolean favorited;
     private Media media;
+    private Media extendedMedia;
+    private long retweetCount;
+    private long favoritesCount;
+    private boolean retweeted;
+
 
     public String getBody() {
         return body;
@@ -70,6 +75,38 @@ public class Tweet implements Parcelable {
         this.media = media;
     }
 
+    public long getRetweetCount() {
+        return retweetCount;
+    }
+
+    public void setRetweetCount(long retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public long getFavoritesCount() {
+        return favoritesCount;
+    }
+
+    public void setFavoritesCount(long favoritesCount) {
+        this.favoritesCount = favoritesCount;
+    }
+
+    public Media getExtendedMedia() {
+        return extendedMedia;
+    }
+
+    public void setExtendedMedia(Media extendedMedia) {
+        this.extendedMedia = extendedMedia;
+    }
+
+    public boolean isRetweeted() {
+        return retweeted;
+    }
+
+    public void setRetweeted(boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
         try {
@@ -78,6 +115,8 @@ public class Tweet implements Parcelable {
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.favorited = jsonObject.getBoolean("favorited");
             tweet.user = User.fromJSONObject(jsonObject.getJSONObject("user"));
+            tweet.favoritesCount = jsonObject.getLong("favorite_count");
+            tweet.retweetCount = jsonObject.getLong("retweet_count");
             JSONObject entities = jsonObject.getJSONObject("entities");
             if(entities.has("media")){
                 JSONArray mediaArray = entities.getJSONArray("media");
@@ -85,6 +124,20 @@ public class Tweet implements Parcelable {
                     tweet.media = Media.fromJSONObject(mediaArray.getJSONObject(0));
                 }
             }
+            if(jsonObject.has("extended_entities")){
+                JSONObject extendedObj = jsonObject.getJSONObject("extended_entities");
+                if(extendedObj.has("media")){
+                    JSONArray extendedMediaArray = extendedObj.getJSONArray("media");
+                    if(extendedMediaArray != null && extendedMediaArray.length() > 0){
+                        tweet.extendedMedia = Media.fromJSONObject(extendedMediaArray.getJSONObject(0));
+                    }
+                }
+            }
+            if(jsonObject.has("retweeted") && !jsonObject.isNull("retweeted")){
+                tweet.retweeted = jsonObject.getBoolean("retweeted");
+            }
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,6 +175,10 @@ public class Tweet implements Parcelable {
         dest.writeString(this.createdAt);
         dest.writeString(String.valueOf(this.favorited));
         dest.writeParcelable(this.media,flags);
+        dest.writeLong(this.retweetCount);
+        dest.writeLong(this.favoritesCount);
+        dest.writeParcelable(this.extendedMedia,flags);
+        dest.writeString(String.valueOf(this.retweeted));
     }
 
     public Tweet() {
@@ -134,6 +191,10 @@ public class Tweet implements Parcelable {
         this.createdAt = in.readString();
         this.favorited = Boolean.parseBoolean(in.readString());
         this.media = in.readParcelable(Media.class.getClassLoader());
+        this.retweetCount = in.readLong();
+        this.favoritesCount = in.readLong();
+        this.extendedMedia = in.readParcelable(Media.class.getClassLoader());
+        this.retweeted = Boolean.parseBoolean(in.readString());
     }
 
     public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {

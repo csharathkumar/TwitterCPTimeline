@@ -7,5 +7,6 @@
     <string name="compose">Compose</string>
     <string name="title_activity_compose">@string/compose</string>
     <string name="tweet">Tweet</string>
+    <string name="title_activity_media">MediaActivity</string>
 
 </resources>

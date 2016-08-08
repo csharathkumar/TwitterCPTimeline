@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import android.widget.VideoView;
 import com.codepath.apps.twittertimeline.R;
 import com.codepath.apps.twittertimeline.models.Media;
 import com.codepath.apps.twittertimeline.models.Tweet;
+import com.codepath.apps.twittertimeline.utils.Constants;
 import com.codepath.apps.twittertimeline.utils.UtilityMethods;
 import com.squareup.picasso.Picasso;
 
@@ -72,22 +74,43 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         }else{
             holder.ivFavorite.setImageResource(R.drawable.ic_favorite_twitter);
         }
+        if(tweet.getFavoritesCount() > 0){
+            holder.tvFavoritesCount.setVisibility(View.VISIBLE);
+            holder.tvFavoritesCount.setText(String.valueOf(tweet.getFavoritesCount()));
+        }else{
+            holder.tvFavoritesCount.setVisibility(View.GONE);
+        }
+        if(tweet.getRetweetCount() > 0){
+            holder.tvRetweetCount.setVisibility(View.VISIBLE);
+            holder.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
+        }else{
+            holder.tvRetweetCount.setVisibility(View.GONE);
+        }
+        if(tweet.isRetweeted()){
+            holder.tvRetweetReplyInfo.setText("You Retweeted");
+            holder.tvRetweetReplyInfo.setVisibility(View.VISIBLE);
+            holder.ivRetweet.setImageResource(R.drawable.ic_retweeted);
+        }else{
+            holder.tvRetweetReplyInfo.setVisibility(View.GONE);
+            holder.ivRetweet.setImageResource(R.drawable.ic_retweet_downloaded);
+        }
         Media media = tweet.getMedia();
+        Media extendedMedia = tweet.getExtendedMedia();
         if(media != null){
             holder.mediaLayout.setVisibility(View.VISIBLE);
-            if(media.getType().equals("")){
-                holder.ivImage.setVisibility(View.VISIBLE);
-                holder.videoView.setVisibility(View.GONE);
-                holder.ivImage.setImageResource(0);
-                Picasso.with(mContext)
-                        .load(media.getMediaUrlHttps()+":small")
-                        .fit().centerCrop()
-                        .into(holder.ivImage);
+            String imageToLoad = "";
+            if(extendedMedia != null && extendedMedia.getType().equalsIgnoreCase(Constants.VIDEO_KEY)){
+                holder.playImageButton.setVisibility(View.VISIBLE);
+                imageToLoad = extendedMedia.getMediaUrlHttps();
             }else{
-                holder.ivImage.setVisibility(View.GONE);
-                holder.videoView.setVisibility(View.VISIBLE);
+                holder.playImageButton.setVisibility(View.GONE);
+                imageToLoad = media.getMediaUrlHttps();
             }
-
+            holder.ivImage.setImageResource(0);
+            Picasso.with(mContext)
+                    .load(imageToLoad+":small")
+                    .fit().centerCrop()
+                    .into(holder.ivImage);
         }else{
             holder.mediaLayout.setVisibility(View.GONE);
         }
@@ -114,7 +137,9 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         return mTweets.size();
     }
 
-    public static class TweetViewHolder extends RecyclerView.ViewHolder{
+    public static class TweetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        @BindView(R.id.tvRetweetReplyInfo)
+        TextView tvRetweetReplyInfo;
         @BindView(R.id.ivProfile)
         ImageView ivProfileImage;
         @BindView(R.id.tvBody)
@@ -126,13 +151,17 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         @BindView(R.id.tvTimestamp)
         TextView tvTimestamp;
         @BindView(R.id.mediaLayout)
-        LinearLayout mediaLayout;
+        FrameLayout mediaLayout;
         @BindView(R.id.ivImage)
         ImageView ivImage;
-        @BindView(R.id.videoView)
-        VideoView videoView;
+        @BindView(R.id.playButton)
+        ImageView playImageButton;
         @BindView(R.id.actionFavorite)
         ImageView ivFavorite;
+        @BindView(R.id.tvFavoritesCount)
+        TextView tvFavoritesCount;
+        @BindView(R.id.tvRetweetCount)
+        TextView tvRetweetCount;
         @BindView(R.id.actionRetweet)
         ImageView ivRetweet;
         @BindView(R.id.actionReply)
@@ -141,30 +170,17 @@ public class TweetsRecyclerAdapter extends RecyclerView.Adapter<TweetsRecyclerAd
         public TweetViewHolder(final View itemView){
             super(itemView);
             ButterKnife.bind(this,itemView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(itemView,getLayoutPosition());
-                }
-            });
-            ivReply.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(v,getLayoutPosition());
-                }
-            });
-            ivFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(v,getLayoutPosition());
-                }
-            });
-            ivRetweet.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(v,getLayoutPosition());
-                }
-            });
+            itemView.setOnClickListener(this);
+            ivReply.setOnClickListener(this);
+            ivFavorite.setOnClickListener(this);
+            ivRetweet.setOnClickListener(this);
+            ivImage.setOnClickListener(this);
+            playImageButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onItemClick(v,getLayoutPosition());
         }
     }
 }

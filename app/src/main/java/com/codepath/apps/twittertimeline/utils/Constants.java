@@ -6,4 +6,6 @@ package com.codepath.apps.twittertimeline.utils;
 public interface Constants {
     String IMAGE_KEY = "photo";
     String VIDEO_KEY = "video";
+
+    int PAGE_SIZE = 100;
 }

@@ -6,7 +6,13 @@
     android:padding="10dp"
     android:background="?android:attr/selectableItemBackground"
     android:layout_height="wrap_content">
-
+    <TextView android:id="@+id/tvRetweetReplyInfo"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivProfile"
+        tools:text="You Retweeted"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -15,7 +21,8 @@
         android:layout_marginEnd="5dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/tvRetweetReplyInfo"
+         />
 
     <com.codepath.apps.twittertimeline.utils.LinkifiedTextView
         android:layout_width="wrap_content"
@@ -33,6 +40,7 @@
         android:id="@+id/tvScreenName"
         android:paddingLeft="2dp"
         tools:text="sharathc"
+        android:layout_below="@+id/tvRetweetReplyInfo"
         android:textColor="@android:color/secondary_text_light_nodisable"
         android:layout_toRightOf="@+id/tvUserName"
         android:layout_toEndOf="@+id/tvUserName"
@@ -44,7 +52,7 @@
         android:id="@+id/tvUserName"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/tvRetweetReplyInfo"
         android:layout_alignTop="@+id/ivProfile"
         android:layout_toRightOf="@+id/ivProfile"
         android:layout_toEndOf="@+id/ivProfile" />
@@ -59,41 +67,36 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         />
-    <LinearLayout android:id="@+id/mediaLayout"
-        android:orientation="vertical"
-        android:layout_below="@+id/tvBody"
+    <FrameLayout android:id="@+id/mediaLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBody"
         android:layout_toRightOf="@+id/ivProfile"
-        android:layout_toEndOf="@+id/ivProfile">
-        <ImageView android:id="@+id/ivImage"
-            android:layout_width="match_parent"
-            android:layout_height="150dp" />
-        <VideoView android:id="@+id/videoView"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:layout_toEndOf="@+id/ivProfile"
+        android:layout_gravity="center_horizontal|center_vertical" >
 
-    <LinearLayout android:orientation="horizontal"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            android:id="@+id/ivImage"
+            tools:src="@drawable/ic_app_launcher"/>
+
+        <ImageView
+            android:id="@+id/playButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_circle_filled_black" />
+
+    </FrameLayout>
+    <include layout="@layout/tweet_actions"
         android:layout_marginTop="5dp"
-        android:layout_below="@+id/mediaLayout"
+        android:layout_toRightOf="@+id/ivProfile"
+        android:layout_toEndOf="@+id/ivProfile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView android:layout_weight="1"
-            android:id="@+id/actionReply"
-            android:src="@drawable/ic_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView android:layout_weight="1"
-            android:src="@drawable/ic_favorite_twitter"
-            android:id="@+id/actionFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView android:layout_weight="1"
-            android:src="@drawable/ic_retweet"
-            android:id="@+id/actionRetweet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mediaLayout"
+        />
 </RelativeLayout>

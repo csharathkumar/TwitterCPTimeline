@@ -78,10 +78,15 @@ public class TimelineActivity extends AppCompatActivity {
                         break;
                     case R.id.actionFavorite:
                         favoriteTweet(position, tweet);
-                        Toast.makeText(getApplicationContext(), "Favorite action clicked",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.actionRetweet:
-                        Toast.makeText(getApplicationContext(), "Retweet action clicked",Toast.LENGTH_SHORT).show();
+                        retweetTweet(position,tweet);
+                        break;
+                    case R.id.videoView:
+                    case R.id.ivImage:
+                        Intent mediaIntent = new Intent(TimelineActivity.this, MediaActivity.class);
+                        mediaIntent.putExtra(MediaActivity.TWEET_TO_DISPLAY,tweet);
+                        startActivityForResult(mediaIntent,MediaActivity.OPEN_MEDIA_ACTIVITY_REQUEST_CODE);
                         break;
                     default:
                         Toast.makeText(getApplicationContext(), tweet.getBody(),Toast.LENGTH_SHORT).show();
@@ -138,6 +143,26 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
+    private void retweetTweet(final int position, Tweet tweet){
+        boolean create = !tweet.isRetweeted();
+        client.retweet(create,tweet.getUid(),new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    Tweet tweetReturned = Tweet.fromJSON(response);
+                    tweetsRecyclerAdapter.replaceItemAtPosition(tweetReturned,position);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
+                Toast.makeText(TimelineActivity.this,"Retweet unsuccessful",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == ComposeActivity.COMPOSE_TWEET_REQUEST_CODE){
@@ -148,6 +173,8 @@ public class TimelineActivity extends AppCompatActivity {
                 }
             }
         }else if(requestCode == ComposeActivity.REPLY_TWEET_REQUEST_CODE){
+
+        }else if(requestCode == MediaActivity.OPEN_MEDIA_ACTIVITY_REQUEST_CODE){
 
         }
     }

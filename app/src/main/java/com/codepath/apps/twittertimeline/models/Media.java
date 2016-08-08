@@ -32,6 +32,14 @@ public class Media implements Parcelable {
         return mediaUrl;
     }
 
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public String getVideoUrlHttps() {
+        return videoUrlHttps;
+    }
+
     public static Media fromJSONObject(JSONObject jsonObject){
         Media media = new Media();
         try {

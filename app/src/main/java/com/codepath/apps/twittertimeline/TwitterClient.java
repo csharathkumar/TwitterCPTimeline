@@ -7,6 +7,7 @@ import org.scribe.builder.api.TwitterApi;
 import android.content.Context;
 
 import com.codepath.apps.twittertimeline.models.Tweet;
+import com.codepath.apps.twittertimeline.utils.Constants;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -50,7 +51,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public void getHomeTimeline(boolean isInitial, long id, AsyncHttpResponseHandler handler){
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count",100);
+		params.put("count", Constants.PAGE_SIZE);
 		if(isInitial){
 			params.put("since_id",id);
 		}else{
