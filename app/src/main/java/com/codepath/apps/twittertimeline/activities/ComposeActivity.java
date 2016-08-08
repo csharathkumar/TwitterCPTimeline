@@ -109,7 +109,7 @@ public class ComposeActivity extends AppCompatActivity {
                         postNewTweet(tweet);
                     }
                 }else{
-                    UiUtils.showSnackBar(coordinatorLayout,"Please check the length of the tweet");
+                    UiUtils.showSnackBar(coordinatorLayout,getString(R.string.check_tweet_length));
                 }
             }
         });

@@ -179,7 +179,7 @@ public class MediaActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 if(data != null){
                     Tweet repliedTweet = data.getParcelableExtra(ComposeActivity.TWEET_OBJECT);
-                    UiUtils.showSnackBar(coordinatorLayout,"Replied Successfully");
+                    UiUtils.showSnackBar(coordinatorLayout,getString(R.string.replied_successfully));
                 }
             }
         }
@@ -218,7 +218,7 @@ public class MediaActivity extends AppCompatActivity {
                     //JSONObject jsonObject = response.getJSONObject(0);
                     mTweet = Tweet.fromJSON(response);
                     tweetModified = true;
-                    UiUtils.showSnackBar(coordinatorLayout,"Favorited");
+                    UiUtils.showSnackBar(coordinatorLayout,getString(R.string.favorited));
                     setIcons();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -228,7 +228,7 @@ public class MediaActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                UiUtils.showSnackBar(coordinatorLayout,"Favorite unsuccessful");
+                UiUtils.showSnackBar(coordinatorLayout,getString(R.string.favorite_successful));
             }
         });
     }
@@ -242,7 +242,7 @@ public class MediaActivity extends AppCompatActivity {
                     mTweet = Tweet.fromJSON(response);
                     tweetModified = true;
                     setIcons();
-                    UiUtils.showSnackBar(coordinatorLayout,"Retweeted");
+                    UiUtils.showSnackBar(coordinatorLayout,getString(R.string.retweeted));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -251,7 +251,7 @@ public class MediaActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                UiUtils.showSnackBar(coordinatorLayout,"Retweet unsuccessful");
+                UiUtils.showSnackBar(coordinatorLayout,getString(R.string.retweet_unsuccessful));
             }
         });
     }

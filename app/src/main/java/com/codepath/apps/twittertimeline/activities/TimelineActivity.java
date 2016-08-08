@@ -160,7 +160,7 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                UiUtils.showSnackBar(coordinatorLayout,"Favorite unsuccessful");
+                UiUtils.showSnackBar(coordinatorLayout,getString(R.string.favorite_unsuccessful));
                 //Toast.makeText(TimelineActivity.this,"Favorite unsuccessful",Toast.LENGTH_SHORT).show();
             }
         });
@@ -174,7 +174,7 @@ public class TimelineActivity extends AppCompatActivity {
                 try {
                     Tweet tweetReturned = Tweet.fromJSON(response);
                     tweetsRecyclerAdapter.replaceItemAtPosition(tweetReturned,position);
-                    UiUtils.showSnackBar(coordinatorLayout,"Retweeted");
+                    UiUtils.showSnackBar(coordinatorLayout,getString(R.string.retweeted));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -183,7 +183,7 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.e(TAG,"Error while favoriting a tweet - "+errorResponse.toString());
-                UiUtils.showSnackBar(coordinatorLayout,"Retweet unsuccessful");
+                UiUtils.showSnackBar(coordinatorLayout,getString(R.string.retweet_unsuccessful));
             }
         });
     }
